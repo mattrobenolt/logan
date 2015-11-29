@@ -43,13 +43,15 @@ class ConfigurationError(Exception):
 
 
 class LoganImporter(object):
-    def __init__(self, name, config_path, default_settings=None, allow_extras=True, callback=None):
+    def __init__(self, name, config_path, default_settings=None, allow_extras=True, callback=None, silent=False):
         self.name = name
         self.config_path = config_path
         self.default_settings = default_settings
         self.allow_extras = allow_extras
         self.callback = callback
-        self.validate()
+        self.silent = silent
+        if not silent:
+            self.validate()
 
     def __repr__(self):
         return "<%s for '%s' (%s)>" % (type(self), self.name, self.config_path)
@@ -112,7 +114,7 @@ class LoganLoader(object):
         load_settings(default_settings_mod, allow_extras=self.allow_extras, settings=settings_mod)
 
         # install the custom settings for this app
-        load_settings(self.config_path, allow_extras=self.allow_extras, settings=settings_mod)
+        load_settings(self.config_path, allow_extras=self.allow_extras, settings=settings_mod, silent=self.silent)
 
         if self.callback:
             self.callback(settings_mod)
